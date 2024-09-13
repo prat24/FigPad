@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Figma Plugin</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'DM Sans', sans-serif;
+            background-color: #2C2C2C;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            color: #f0f0f0;
+            text-align: center;
+        }
+
+        .highlight {
+            color: #2196F3;
+        }
+
+        label {
+            font-size: 0.9em;
+            color: #ccc;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"], select, input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+            border: none;
+            background-color: #404040;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        /* Updated Select styling for dropdown */
+        select {
+            width: 100%;
+            padding: 12px 32px 12px 12px; /* Padding for arrow on the right */
+            margin-bottom: 16px;
+            border-radius: 8px;
+            border: none;
+            background-color: #404040;
+            color: white;
+            box-sizing: border-box;
+            appearance: none; /* Hide default dropdown arrow */
+            background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0OCA0OCIgd2lkdGg9IjE2IiBoZWlnaHQ9IjE2Ij48cGF0aCBmaWxsPSJ3aGl0ZSIgZD0iTTEyLjAwMyAxMi42OTRMIDI0IDIzLjY5NiAzNS45OTYgMTIuNjkzIDQ4IDE2LjY5IDM0LjAwNCAzMCAyNCA0MCAxMCAzMCAwIDE2LjY5MnoiLz48L3N2Zz4='); /* Custom arrow icon */
+            background-repeat: no-repeat;
+            background-position: right 12px center; /* Align arrow */
+            background-size: 12px; /* Size of the arrow */
+        }
+
+        select:focus {
+            outline: none;
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
+        }
+
+        button {
+            width: 100%;
+            background-color: #2196F3;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        button:hover {
+            background-color: #1976D2;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>Fig<span class="highlight">Pad</span> - Aesthetic and Informative Notes ✨</h1>
+
+    <label for="username">Enter Your Name</label>
+    <input type="text" id="username" placeholder="E.g. Aman" required>
+
+    <label for="comment">Write Your Note/Comment</label>
+    <input type="text" id="comment" placeholder="E.g. primary navbar replaced after this point..." required>
+
+    <label for="type">Select Type</label>
+    <select id="type" required>
+        <option value="note">Note</option>
+        <option value="todo">Todo</option>
+        <option value="update">Update</option>
+    </select>
+
+    <label for="profile-picture">Upload Profile Picture (optional)</label>
+    <input type="file" id="profile-picture" accept="image/*">
+
+    <button id="create-btn">Create</button>
+
+    <script>
+        document.getElementById('create-btn').addEventListener('click', async () => {
+            const comment = document.getElementById('comment').value;
+            const noteType = document.getElementById('type').value;
+            const username = document.getElementById('username').value;
+            const profilePictureInput = document.getElementById('profile-picture');
+            
+            if (!comment || !noteType || !username) {
+                alert('Please fill all fields to generate a comment');
+                return;
+            }
+
+            let imageBytes = null;
+            if (profilePictureInput.files.length > 0) {
+                const profilePictureFile = profilePictureInput.files[0];
+                imageBytes = await profilePictureFile.arrayBuffer();
+            }
+
+            parent.postMessage({
+                pluginMessage: {
+                    type: 'create',
+                    comment,
+                    noteType,
+                    profileData: {
+                        imageBytes,
+                        username
+                    }
+                }
+            }, '*');
+        });
+    </script>
+</body>
+</html>
